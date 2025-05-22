@@ -3,6 +3,7 @@ package ridebooking;
 import java.io.Serializable;
 
 public class BookingRecord implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String bookingId;
     private String userId;
     private String source;

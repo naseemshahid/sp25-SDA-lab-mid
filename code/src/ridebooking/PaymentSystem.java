@@ -5,10 +5,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentSystem {
-    private static final String PAYMENT_FILE = "payments.dat";
+    private static final String DATA_DIR = "data";
+    private static final String PAYMENT_FILE = DATA_DIR + File.separator + "payments.dat";
+
+    public PaymentSystem() {
+        initializeDataDirectory();
+    }
+
+    private void initializeDataDirectory() {
+        File dir = new File(DATA_DIR);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+    }
 
     public boolean processPayment(User user, double amount, String paymentMethod) {
-        // In a real system, this would integrate with actual payment gateways
+        if (user == null || amount <= 0 || paymentMethod == null) {
+            System.err.println("Invalid payment parameters");
+            return false;
+        }
+
         try {
             // Simulate payment processing
             System.out.println("Processing payment of $" + amount + 
@@ -30,9 +46,11 @@ public class PaymentSystem {
     private void savePaymentRecord(PaymentRecord record) {
         List<PaymentRecord> records = getAllPaymentRecords();
         records.add(record);
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(PAYMENT_FILE))) {
-            oos.writeObject(records);
-            System.out.println("Payment record saved: $" + record.getAmount());
+        try {
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(PAYMENT_FILE))) {
+                oos.writeObject(records);
+                System.out.println("Payment record saved: $" + record.getAmount());
+            }
         } catch (IOException e) {
             System.err.println("Error saving payment record: " + e.getMessage());
         }

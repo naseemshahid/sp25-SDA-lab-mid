@@ -3,6 +3,7 @@ package ridebooking;
 import java.io.Serializable;
 
 public class PaymentRecord implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String userId;
     private double amount;
     private String paymentMethod;

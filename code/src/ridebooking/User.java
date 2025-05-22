@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User implements Serializable {
-    private static final String USER_FILE = "users.dat";
+    private static final long serialVersionUID = 1L;
+    private static final String DATA_DIR = "data";
+    private static final String USER_FILE = DATA_DIR + File.separator + "users.dat";
     private String userId;
     private String name;
     private String email;
@@ -38,9 +40,15 @@ public class User implements Serializable {
     public void saveToFile() {
         List<User> users = getAllUsers();
         users.add(this);
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(USER_FILE))) {
-            oos.writeObject(users);
-            System.out.println("User saved to file: " + name);
+        try {
+            File dir = new File(DATA_DIR);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(USER_FILE))) {
+                oos.writeObject(users);
+                System.out.println("User saved to file: " + name);
+            }
         } catch (IOException e) {
             System.err.println("Error saving user: " + e.getMessage());
         }

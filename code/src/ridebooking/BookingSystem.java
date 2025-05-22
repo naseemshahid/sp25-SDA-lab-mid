@@ -5,14 +5,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookingSystem {
-    private static final String BOOKING_FILE = "bookings.dat";
+    private static final String DATA_DIR = "data";
+    private static final String BOOKING_FILE = DATA_DIR + File.separator + "bookings.dat";
     public final PaymentSystem paymentSystem;
 
     public BookingSystem() {
         this.paymentSystem = new PaymentSystem();
+        initializeDataDirectory();
+    }
+
+    private void initializeDataDirectory() {
+        File dir = new File(DATA_DIR);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
     }
 
     public String processBooking(User user, String source, String destination, String paymentMethod) {
+        if (user == null || source == null || destination == null || paymentMethod == null) {
+            return "Booking failed: Invalid input parameters";
+        }
+
         // Step 2: Process booking
         String bookingId = generateBookingId();
         double fare = calculateFare(source, destination);
@@ -42,9 +55,11 @@ public class BookingSystem {
     private void saveBookingRecord(BookingRecord record) {
         List<BookingRecord> records = getAllBookingRecords();
         records.add(record);
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(BOOKING_FILE))) {
-            oos.writeObject(records);
-            System.out.println("Booking record saved: " + record.getBookingId());
+        try {
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(BOOKING_FILE))) {
+                oos.writeObject(records);
+                System.out.println("Booking record saved: " + record.getBookingId());
+            }
         } catch (IOException e) {
             System.err.println("Error saving booking record: " + e.getMessage());
         }
